@@ -11,10 +11,11 @@
 * Ethernet Cable
 * USB Cable to power Pi
 * DHT22 sensor 
-* 4.7 K Ohm resistor
+* 10 K Ohm resistor
 * 4 - switch Relay module
 * Some male-male, male-female and female-female Wire
-* PC/Laptop to view and control Raspberry Pi 
+* PC/Laptop to view and control Raspberry Pi
+* power bank 
 
 ## Step 1: OS for the Raspberry Pi(作業系統安裝)
 We have installed Raspbian OS to run on Raspberry Pi . First extract the OS files into pendrive by [win32diskimager](https://drive.google.com/open?id=0B496SaFqKMZCcVVJZ2NxcUp6Ujg) and Set SD to Raspberry Pi and powered it up. Raspberry Pi started to boot up. We created a file named “ssh” without any extension into bootable memory card to enable ssh into Raspberry pi. 
