@@ -1,0 +1,84 @@
+樹莓派專題-製作自動化香菇栽培環境解決方案模型
+菇類產業發展至今已有百年歷史，是為餐桌上常見的珍饈，更是各國料理不可或缺的食材，其富含豐富的蛋白質、維生素、礦物質與膳食纖維等營養素，目前我國各式菇類產業整體產值已逾100億新台幣，為我國農業發展之要角 。近年來勞動人口減少及人力成本提高菇類產業面臨的問題，其中太空包製造需要大量人力，行政院農業委員會自106年起推動智慧農業計畫，藉由智慧農業相關研究，將自動化、資通訊、物聯網與產線設計及機械製造等技術導入菇類生產流程當中，幫助產業解決問題並增加產量及工作效率，以提升我國菇類產業之整體產業環境。據報導，經台中市新社區農會統計，台中市新社區香菇栽培面積達200公頃以上、供應全台香菇65％以上，每年為新社地區帶來近25億元以上的產值，剛好我任職於這個地區也對這產業有些許認識，也順道帶大家介紹一下這個產業生態。
+本專題是基於樹莓派的香菇栽培自動化系統。對於香菇栽培農場，溫度和濕度是需要控制的主要敏感因素，因此需要經常持續性監測這些因素數值，以保持合適的濕度和溫度平衡。
+本次是以一個普通香菇農場的規模來試驗，占地約為1,500-2,000平方公尺，概估約有30萬個太空包，如此寬廣的空間要控制溫、濕度是相當困難的，換句話來說是要耗費相當高的設備資本才能辦得到，這對一般種植香菇的菇農來說實在非常困難，所以本次專題只是藉由嘗試透過樹莓派(4B)安裝溫溼度感測器(Sensor)在香菇農場內，藉由收集相關數據，未來可能採取連接外部資訊(如氣象及降雨預報等)些微調整內部、外在環境因素，長時間觀察分析數據改變情形，進而找到可控因素以提升整體產量。
+本專案使用設備如下(參考https://github.com/srdesh/amcewrpi)：
+	樹莓派 4B (4G)
+	SD卡
+	乙太網路線
+	變壓器及USB線
+	DHT22傳感器
+	4.7 K 歐姆電阻
+	4-開關繼電器
+	一些公對公、公對母和母對母的杜邦線
+	桌上型/筆記型電腦(用以查看和控制 Raspberry Pi)
+第 1 步：Raspberry Pi 的操作系統
+安裝 Raspbian OS 使得 Raspberry Pi 得以運行(可參考https://ithelp.ithome.com.tw/articles/10235135)。
+第 2 步：將樹莓派連接到 PC/NB
+先行外接鍵盤及滑鼠，以便於操控。接續介紹VNC軟體
+VNC是一個遠端桌面的軟體，分成我們的VNC Server(Raspberry pi)，與VNC Viewer（筆電端）。
+Raspberry pi：這邊很簡單，跟上面開啟ssh權限的路一樣，只要進入偏好設定->Raspberry pi設定->介面tag，把VNC啟用即可，這時候在桌面的右上角就會出現一個VNC圖示，我們打開它就可以看到VNC CONNECT by RealVNC，只要在VNC Viewer輸入上面出現的ip address（這邊是192.168.10.7），就可以直接遠端控制Raspberry pi了。(可參考https://ithelp.ithome.com.tw/articles/10235452)
+
+
+筆電端：在筆電上我們要去下載VNC Viewer
+https://www.realvnc.com/en/connect/download/viewer/macos/
+下載完成後打開，會是以下畫面
+
+
+
+
+
+在上面輸入ip address進行連線，這時候會需要輸入Raspberry pi 的登入帳密，請輸入昨天在設定時的密碼，如果帳號為預設值的話打pi即可。
+這樣就可以連線成功，可以遠端控制你的Raspberry pi桌面了。
+第 3 步：連接 DHT-22
+	確保 Raspberry Pi 電源已關閉。
+	麵包板接線如下圖所示(參考https://www.ms-99.top/ProductDetail.aspx?iid=118427068&pr=35.96
+
+
+
+
+
+	“+” (VCC) 引腳到 Raspberry Pi GPIO +3.3 V 引腳。
+	“中間” DATA 引腳連接到 GPIO 引腳。
+	10 K-Ohm 電阻設置到“+”電源引腳和數據引腳
+	“-” (GND) 引腳到 GPIO 接地引腳。
+第 4 步：連接繼電器模組
+	確保 Raspberry Pi 電源已關閉。
+	麵包板用於以下連接。
+	VCC 引腳到 Raspberry Pi GPIO 5V 引腳。
+	其餘四個引腳連接到 GPIO 引腳。
+	GND 引腳到 GPIO GND 引腳
+	打開Raspberry Pi的電源
+第 4 步：安裝庫和包
+	那麼開始安裝，今天我們會使用到Adafruit_DHT這個Library
+在開始進行到這個library之前，我們要先確認系統已經更新。(參考https://ithelp.ithome.com.tw/articles/10238029)
+sudo apt-get update
+sudo apt-get install python3-pip
+sudo apt-get install python3-dev python3-pip
+sudo python3 -m pip install --upgrade pip setuptools wheel
+	現在使用pip安裝Adafruit_DHT
+sudo pip3 install Adafruit_DHT
+	編輯python程式碼-編輯一個python檔接收溫度及濕度資料
+nano ~/DHT22.py
+進入DHT22.py開始打上程式碼，稍微解釋一下變數
+DHT_SENSOR = Adafruit_DHT.DHT22就是告訴程式今天感測器是誰
+這個library除了DHT22還有支援Adafruit_DHT.DHT11 和 Adafruit_DHT.AM2302
+DHT_PIN = 4是我們中間那隻腳連接的地方，因為我連在GPIO4，所以=4
+import Adafruit_DHT 
+DHT_SENSOR = Adafruit_DHT.DHT22 
+DHT_PIN = 4  
+
+while True:
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    if humidity is not None and temperature is not None:
+        print("Temp={0:0.2f}*C  Humidity={1:0.2f}%".format(temperature, humidity))
+    else:
+        print("Failed to retrieve data from HDT22 sensor")
+pi@raspberrypi:~/Desktop $ python3 DHT22_2.py
+Temp=25.10*C Humidity=66.70%
+Temp=25.20*C Humidity=66.50%
+Temp=25.20*C Humidity=66.50%
+Temp=25.20*C Humidity=66.50%
+Temp=25.10*C Humidity=66.40%
+偵測結果，成功！
+可考慮連接NOTIFY~
