@@ -1,4 +1,4 @@
-# Automated Mushroom Cultivation Environment with Raspberry Pi Model - 2 B
+# Automated Mushroom Cultivation Environment with Raspberry Pi Model - 4 B
 
 ## Problem domain & Solution
 This project is raspberry pi based mushroom cultivation automated system. For mushroom cultivation temperature and humidity are sensitive factors, so these need to be monitored frequently to maintain proper balance of humidity and temperature. Which is very tough for human but need to resolve the issue by any how. So we decided to build an automated system to maintain this balancing of humidity and temperature based on some logical conditions and fires some actions. Like when the humidity is increased and cross its limit then ventilators are open and water spray is open to spray on mushroom. And when the temperature is decreased and it feels cold the ventilators are close and heater starts.
